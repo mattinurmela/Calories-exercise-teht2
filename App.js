@@ -1,6 +1,5 @@
-import { StatusBar } from 'expo-status-bar';
 import { useState } from 'react';
-import { StyleSheet, Text, TextInput, View } from 'react-native';
+import { Button, StyleSheet, Text, TextInput, View } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import RadioForm from 'react-native-simple-radio-button';
 
@@ -23,30 +22,60 @@ export default function App() {
     { label: 'Female', value: 'female'}
   ]
 
+  const calculate = () => {
+    let result = 0
+    if (weight <= 0) {
+      alert('Please enter your weight')
+    }
+    else if (gender === 'male') {
+      result = (879 + 10.2 * weight) * intensity
+    } else {
+      result = (795 + 7.18 * weight) * intensity
+    }
+    setCalories(result)
+  }
+
   return (
     <View style={styles.container}>
-      <View style={styles.field}>
       <Text>Weight</Text>
+      <View style={styles.field}>
       <TextInput
-        style={styles.input}
         onChangeText={text => setWeight(text)}
         placeholder='in kilograms'
-        keyboardType='numeric'></TextInput>
+        keyboardType='numeric'
+        />
       </View>
       <View style={styles.field}>
       <Text>Intensity</Text>
-      <Picker style={styles.intensity}
-          onValueChange={(itemValue) => setIntensity(itemValue)}
-          selecetedValue={intensity}
-        >
-          {intensities.map((intensity, index) => (
+      <Picker 
+          style={styles.intensity}
+          onValueChange={(value) => setIntensity(value)}
+          selectedValue={intensity}
+      >
+        {
+          intensities.map((intensity, index) => (
             <Picker.Item key={index} label={intensity.label} value={intensity.value}/> 
             ))
         }
       </Picker>
       </View>
+      <View style={styles.field}>
       <Text>Gender</Text>
-      <StatusBar style="auto" />
+      <RadioForm
+        style={styles.radio}
+        buttonSize={10}
+        radio_props={genders}
+        initial={0}
+        onPress={(itemValue) => setGender(itemValue)}
+        />  
+      </View>
+    <View style={styles.field}>
+      <Text>{calories.toFixed(0)} calories</Text>
+    </View>
+    <Button 
+      title="Calculate"
+      onPress={calculate}
+      />
     </View>
   );
 }
@@ -54,8 +83,17 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
+    paddingTop: 56,
+    margin: 8,
   },
+  field: {
+    marginBottom: 8,
+    marginTop: 8,
+  },
+  radio: {
+    marginTop: 8,
+  },
+  intensity: {
+    alignSelf: 'stretch',
+  }
 });
